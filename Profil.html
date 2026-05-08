@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>👤 InstaGalaxy - Profil</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #000;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 🎨 HEADER */
+        .top-bar {
+            height: 55px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            backdrop-filter: blur(15px);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.3rem;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '✨';
+            position: absolute;
+            right: -18px;
+            top: -3px;
+            font-size: 0.8rem;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.7; transform: scale(0.8) rotate(15deg); }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-btn {
+            background: none; border: none; font-size: 1.4rem; cursor: pointer; color: white;
+            position: relative; transition: transform 0.1s; padding: 5px;
+        }
+        .header-btn:active { transform: scale(0.85); }
+        .header-btn .badge {
+            position: absolute; top: 2px; right: 2px; background: #ff3040; color: white;
+            font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 10px;
+            min-width: 16px; text-align: center; animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+        /* 👤 CONTENU PRINCIPAL */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-top: 55px;
+            padding-bottom: 65px;
+            position: relative;
+        }
+
+        /* 📸 SECTION PROFIL */
+        .profile-header {
+            padding: 25px 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .profile-avatar-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433, #bc1888);
+            border: 3px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-avatar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        .profile-status {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background: #00b894;
+            border: 3px solid #000;
+            border-radius: 50%;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .verified-badge {
+            color: #00FFFF;
+            font-size: 1rem;
+        }
+
+        .profile-handle {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+
+        .profile-bio {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+
+        /* 📊 STATISTIQUES */
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .stat-item:active { transform: scale(0.95); }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #f09433, #bc1888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 3px;
+        }
+
+        /* 🏆 BADGES/ACHIEVEMENTS */
+        .badges-section {
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badges-grid {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 10px;
+        }
+
+        .badges-grid::-webkit-scrollbar { display: none; }
+
+        .badge-item {
+            background: linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(118,75,162,0.2) 100%);
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            min-width: 100px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .badge-item:active { transform: scale(0.95); }
+        .badge-item.locked { opacity: 0.4; filter: grayscale(1); }
+
+        .badge-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .badge-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-progress {
+            font-size: 0.65rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        /* 💰 REVENUS (Affiliation) */
+        .revenue-section {
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .revenue-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .revenue-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate { to { transform: rotate(360deg); } }
+
+        .revenue-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .revenue-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .revenue-amount {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .revenue-stats {
+            display: flex;
+            gap: 15px;
+        }
+
+        .revenue-stat {
+            flex: 1;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .revenue-stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .revenue-stat-label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        .withdraw-btn {
+            margin-top: 15px;
+            width: 100%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .withdraw-btn:active { transform: scale(0.97); background: rgba(255,255,255,0.3); }
+
+        /* 🎬 GRID POSTS */
+        .posts-section {
+            padding: 20px 0;
+        }
+
+        .posts-tabs {
+            display: flex;
+            padding: 0 15px 15px;
+            gap: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .post-tab {
+            padding: 10px 0;
+            cursor: pointer;
+            position: relative;
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+
+        .post-tab:active { transform: scale(0.95); }
+        .post-tab.active { opacity: 1; }
+        .post-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -16px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: white;
+            border-radius: 3px;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            padding: 3px;
+        }
+
+        .post-item {
+            aspect-ratio: 1/1;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .post-item:active { transform: scale(0.97); }
+
+        .post-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .post-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .post-item:hover .post-overlay { opacity: 1; }
+
+        .post-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* ⚙️ PARAMÈTRES RAPIDES */
+        .settings-section {
+            padding: 20px 15px;
+        }
+
+        .settings-list {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .setting-item:last-child { border-bottom: none; }
+        .setting-item:active { background: rgba(255,255,255,0.1); }
+
+        .setting-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+
+        .setting-desc {
+            font-size: 0.75rem;
+            opacity: 0.6;
+        }
+
+        .setting-arrow {
+            opacity: 0.5;
+            font-size: 1rem;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(22px);
+        }
+
+        /* 🎨 ANIMATIONS */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-2px, 0) rotate(-1.5deg); }
+            40% { transform: translate(2px, -1px) rotate(1deg); }
+            60% { transform: translate(-1px, 2px) rotate(0deg); }
+            80% { transform: translate(1px, -2px) rotate(-1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        .shaking { animation: shake 0.22s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+        /* ✨ Étoiles magiques */
+        .magic-star {
+            position: fixed; font-size: 26px; pointer-events: none;
+            animation: starFly 1s ease-out forwards; z-index: 1000; opacity: 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+        @keyframes starFly {
+            0% { transform: translate(0, 0) scale(0.2) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.6) rotate(var(--rot)); opacity: 0; }
+        }
+
+        /* 🎊 Confettis */
+        .confetti {
+            position: fixed; width: 10px; height: 10px; pointer-events: none;
+            animation: confettiFall 2.5s ease-out forwards; z-index: 1001;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* 🧭 BOTTOM NAV */
+        .bottom-nav {
+            height: 65px;
+            background: linear-gradient(0deg, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.9) 100%);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            backdrop-filter: blur(15px);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 8px 5px;
+            cursor: pointer;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.2s;
+            position: relative;
+            font-size: 1.35rem;
+            flex: 1;
+            max-width: 70px;
+        }
+
+        .nav-item:active { transform: scale(0.92); color: white; }
+        .nav-item.active { color: white; }
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: 2px; width: 22px; height: 3px;
+            background: linear-gradient(90deg, #f09433, #bc1888); border-radius: 3px;
+            animation: underlineGlow 2s ease-in-out infinite;
+        }
+        @keyframes underlineGlow {
+            0%, 100% { opacity: 1; box-shadow: 0 0 5px rgba(188,24,136,0.5); }
+            50% { opacity: 0.8; box-shadow: 0 0 12px rgba(240,148,51,0.8); }
+        }
+        .nav-label { font-size: 0.65rem; font-weight: 500; opacity: 0.85; }
+        .nav-item.active .nav-label { opacity: 1; font-weight: 600; }
+
+        /* 🔔 Notifications */
+        .nav-item.has-notification::before {
+            content: ''; position: absolute; top: 8px; right: 12px;
+            width: 9px; height: 9px; background: #ff3040; border-radius: 50%;
+            border: 2px solid #000; animation: notificationPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes notificationPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.25); opacity: 0.9; }
+        }
+        .nav-item .badge-number {
+            position: absolute; top: 5px; right: 10px; background: #ff3040;
+            color: white; font-size: 0.6rem; font-weight: bold;
+            padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* 🔔 Toast */
+        #toast {
+            position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%);
+            background: rgba(30,30,50,0.95); color: white; padding: 12px 24px;
+            border-radius: 30px; font-size: 0.9rem; z-index: 1000; opacity: 0;
+            transition: opacity 0.3s, transform 0.3s; backdrop-filter: blur(10px);
+            border: 1px solid rgba(188,24,136,0.4); box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            pointer-events: none;
+        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* 📱 Responsive */
+        @media (max-height: 700px) {
+            .top-bar { height: 50px; }
+            .bottom-nav { height: 58px; }
+            .main-content { padding-top: 50px; padding-bottom: 58px; }
+            #toast { bottom: 75px; }
+        }
+        @media (max-width: 380px) {
+            .logo { font-size: 1.1rem; }
+            .profile-avatar { width: 70px; height: 70px; font-size: 2rem; }
+            .posts-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🎨 HEADER -->
+    <header class="top-bar">
+        <div class="logo" onclick="triggerMagic(this, event)">InstaGalaxy</div>
+        <div class="header-actions">
+            <button class="header-btn" onclick="triggerMagic(this, event)" title="Paramètres">⚙️</button>
+            <button class="header-btn" onclick="triggerMagic(this, event)" title="Notifications">
+                🔔<span class="badge" id="notifCount">3</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 👤 CONTENU PRINCIPAL -->
+    <main class="main-content">
+        
+        <!-- 📸 SECTION PROFIL -->
+        <div class="profile-header">
+            <div class="profile-avatar-container">
+                <div class="profile-avatar" onclick="triggerMagic(this, event)">👤</div>
+                <div class="profile-status"></div>
+            </div>
+            <div class="profile-info">
+                <div class="profile-name">
+                    GameBlack66
+                    <span class="verified-badge">✓</span>
+                </div>
+                <div class="profile-handle">@gameblack66</div>
+                <div class="profile-bio">🎬 Créateur de contenu | 🚀 Tech & Innovation | ✨ InstaGalaxy Founder</div>
+            </div>
+        </div>
+
+        <!-- 📊 STATISTIQUES -->
+        <div class="stats-row">
+            <div class="stat-item" onclick="triggerMagic(this, event)">
+                <div class="stat-value" id="statPosts">0</div>
+                <div class="stat-label">Posts</div>
+            </div>
+            <div class="stat-item" onclick="triggerMagic(this, event)">
+                <div class="stat-value" id="statFollowers">0</div>
+                <div class="stat-label">Abonnés</div>
+            </div>
+            <div class="stat-item" onclick="triggerMagic(this, event)">
+                <div class="stat-value" id="statFollowing">0</div>
+                <div class="stat-label">Abonnements</div>
+            </div>
+            <div class="stat-item" onclick="triggerMagic(this, event)">
+                <div class="stat-value" id="statViews">0</div>
+                <div class="stat-label">Vues</div>
+            </div>
+        </div>
+
+        <!-- 🏆 BADGES/ACHIEVEMENTS -->
+        <div class="badges-section">
+            <div class="section-title">
+                <span>🏆</span>
+                <span>Succès</span>
+            </div>
+            <div class="badges-grid">
+                <div class="badge-item" onclick="triggerMagic(this, event)">
+                    <div class="badge-icon">🌟</div>
+                    <div class="badge-name">Débutant</div>
+                    <div class="badge-progress">✓ Débloqué</div>
+                </div>
+                <div class="badge-item" onclick="triggerMagic(this, event)">
+                    <div class="badge-icon">🔥</div>
+                    <div class="badge-name">Créateur</div>
+                    <div class="badge-progress">10/50 posts</div>
+                </div>
+                <div class="badge-item" onclick="triggerMagic(this, event)">
+                    <div class="badge-icon">💎</div>
+                    <div class="badge-name">Influenceur</div>
+                    <div class="badge-progress">1K/10K abonnés</div>
+                </div>
+                <div class="badge-item" onclick="triggerMagic(this, event)">
+                    <div class="badge-icon">👑</div>
+                    <div class="badge-name">Légende</div>
+                    <div class="badge-progress">🔒 Verrouillé</div>
+                </div>
+                <div class="badge-item" onclick="triggerMagic(this, event)">
+                    <div class="badge-icon">💰</div>
+                    <div class="badge-name">Entrepreneur</div>
+                    <div class="badge-progress">100€/1000€</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 💰 REVENUS (Affiliation) -->
+        <div class="revenue-section">
+            <div class="section-title">
+                <span>💰</span>
+                <span>Revenus Affiliation</span>
+            </div>
+            <div class="revenue-card">
+                <div class="revenue-content">
+                    <div class="revenue-label">Solde disponible</div>
+                    <div class="revenue-amount" id="revenueAmount">0,00€</div>
+                    <div class="revenue-stats">
+                        <div class="revenue-stat">
+                            <div class="revenue-stat-value" id="revenueClicks">0</div>
+                            <div class="revenue-stat-label">Clics</div>
+                        </div>
+                        <div class="revenue-stat">
+                            <div class="revenue-stat-value" id="revenueConversions">0</div>
+                            <div class="revenue-stat-label">Conversions</div>
+                        </div>
+                        <div class="revenue-stat">
+                            <div class="revenue-stat-value" id="revenueMonth">0€</div>
+                            <div class="revenue-stat-label">Ce mois</div>
+                        </div>
+                    </div>
+                    <button class="withdraw-btn" onclick="withdrawRevenue(event)">
+                        🏦 Demander un retrait
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🎬 GRID POSTS -->
+        <div class="posts-section">
+            <div class="posts-tabs">
+                <div class="post-tab active" data-tab="posts" onclick="setPostTab(this, event)">
+                    <span>📊</span>
+                </div>
+                <div class="post-tab" data-tab="reels" onclick="setPostTab(this, event)">
+                    <span>🎬</span>
+                </div>
+                <div class="post-tab" data-tab="saved" onclick="setPostTab(this, event)">
+                    <span>🔖</span>
+                </div>
+            </div>
+            <div class="posts-grid" id="postsGrid"></div>
+        </div>
+
+        <!-- ⚙️ PARAMÈTRES RAPIDES -->
+        <div class="settings-section">
+            <div class="section-title">
+                <span>⚙️</span>
+                <span>Paramètres</span>
+            </div>
+            <div class="settings-list">
+                <div class="setting-item" onclick="triggerMagic(this, event)">
+                    <div class="setting-icon">👤</div>
+                    <div class="setting-info">
+                        <div class="setting-name">Modifier le profil</div>
+                        <div class="setting-desc">Photo, bio, informations</div>
+                    </div>
+                    <span class="setting-arrow">›</span>
+                </div>
+                <div class="setting-item" onclick="triggerMagic(this, event)">
+                    <div class="setting-icon">🔔</div>
+                    <div class="setting-info">
+                        <div class="setting-name">Notifications</div>
+                        <div class="setting-desc">Gérer les alertes</div>
+                    </div>
+                    <span class="setting-arrow">›</span>
+                </div>
+                <div class="setting-item" onclick="triggerMagic(this, event)">
+                    <div class="setting-icon">🔒</div>
+                    <div class="setting-info">
+                        <div class="setting-name">Confidentialité</div>
+                        <div class="setting-desc">Qui peut voir ton contenu</div>
+                    </div>
+                    <span class="setting-arrow">›</span>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-icon">🔊</div>
+                    <div class="setting-info">
+                        <div class="setting-name">Son</div>
+                        <div class="setting-desc">Activer/désactiver les sons</div>
+                    </div>
+                    <div class="toggle-switch" id="soundToggle" onclick="toggleSound(event)"></div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-icon">📳</div>
+                    <div class="setting-info">
+                        <div class="setting-name">Vibration</div>
+                        <div class="setting-desc">Retour haptique</div>
+                    </div>
+                    <div class="toggle-switch active" id="vibrateToggle" onclick="toggleVibrate(event)"></div>
+                </div>
+                <div class="setting-item" onclick="triggerMagic(this, event)">
+                    <div class="setting-icon">❓</div>
+                    <div class="setting-info">
+                        <div class="setting-name">Aide & Support</div>
+                        <div class="setting-desc">Contacter l'équipe</div>
+                    </div>
+                    <span class="setting-arrow">›</span>
+                </div>
+                <div class="setting-item" onclick="logout(event)" style="color: #ff3040;">
+                    <div class="setting-icon" style="background: rgba(255,48,64,0.2);">🚪</div>
+                    <div class="setting-info">
+                        <div class="setting-name">Se déconnecter</div>
+                        <div class="setting-desc">Quitter ton compte</div>
+                    </div>
+                    <span class="setting-arrow">›</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 🧭 BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/MaxUltimate.html'><div class="nav-item" data-page="home" onclick="navigateTo(this, event)">🏠<span class="nav-label">Accueil</span></div></a>
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/Recherche.html'><div class="nav-item" data-page="search" onclick="navigateTo(this, event)">🔍<span class="nav-label">Recherche</span></div></a>
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/re2ls.html'><div class="nav-item" data-page="reels" onclick="navigateTo(this, event)">🎬<span class="nav-label">Reels</span></div></a>
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/Boutique.html'><div class="nav-item" data-page="shop" onclick="navigateTo(this, event)">🛍️<span class="nav-label">Boutique</span></div></a>
+        <div class="nav-item active" data-page="profile" onclick="navigateTo(this, event)">👤<span class="nav-label">Profil</span></div>
+    </nav>
+
+    <script>
+        // ⚙️ CONFIG
+        const CONFIG = {
+            profile: {
+                posts: 47,
+                followers: 12543,
+                following: 892,
+                views: 458921,
+                revenue: 127.50,
+                clicks: 1543,
+                conversions: 23,
+                monthRevenue: 45.00
+            },
+            posts: [
+                { emoji: '🎬', likes: 1234, comments: 89 },
+                { emoji: '📱', likes: 2341, comments: 156 },
+                { emoji: '🎮', likes: 3421, comments: 234 },
+                { emoji: '🎵', likes: 1892, comments: 123 },
+                { emoji: '🌟', likes: 4532, comments: 345 },
+                { emoji: '🔥', likes: 5621, comments: 432 },
+                { emoji: '💎', likes: 2134, comments: 178 },
+                { emoji: '🚀', likes: 3245, comments: 267 },
+                { emoji: '✨', likes: 4123, comments: 312 }
+            ]
+        };
+
+        // 🧠 État
+        let soundEnabled = localStorage.getItem('instaGalaxy_sound') === 'true';
+        let vibrateEnabled = localStorage.getItem('instaGalaxy_vibrate') !== 'false';
+        let revenue = parseFloat(localStorage.getItem('instaGalaxy_revenue') || '0');
+        let revenueClicks = parseInt(localStorage.getItem('instaGalaxy_revenueClicks') || '0');
+        let revenueConversions = parseInt(localStorage.getItem('instaGalaxy_revenueConversions') || '0');
+
+        // 🎵 Sons
+        const SOUNDS = {
+            click: 'https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3',
+            success: 'https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3',
+            notification: 'https://assets.mixkit.co/sfx/preview/mixkit-interface-hint-notification-914.mp3'
+        };
+
+        function playSound(name) { if(!soundEnabled) return; const a=new Audio(SOUNDS[name]); a.volume=0.3; a.play().catch(()=>{}); }
+
+        // 🎯 Init
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            updateRevenue();
+            renderPosts();
+            updateToggles();
+            simulateRevenueGrowth();
+        });
+
+        // 📊 Stats
+        function updateStats() {
+            animateNumber('statPosts', 0, CONFIG.profile.posts, 1000);
+            animateNumber('statFollowers', 0, CONFIG.profile.followers, 1500);
+            animateNumber('statFollowing', 0, CONFIG.profile.following, 1000);
+            animateNumber('statViews', 0, CONFIG.profile.views, 2000);
+        }
+
+        function animateNumber(id, start, end, duration) {
+            const el = document.getElementById(id);
+            const range = end - start;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + range * easeProgress);
+                el.textContent = formatNumber(current);
+                
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+
+        // 💰 Revenus
+        function updateRevenue() {
+            document.getElementById('revenueAmount').textContent = revenue.toFixed(2) + '€';
+            document.getElementById('revenueClicks').textContent = formatNumber(revenueClicks);
+            document.getElementById('revenueConversions').textContent = formatNumber(revenueConversions);
+            document.getElementById('revenueMonth').textContent = CONFIG.profile.monthRevenue.toFixed(2) + '€';
+        }
+
+        function simulateRevenueGrowth() {
+            // Simulation de croissance des revenus (à remplacer par vraies données)
+            setInterval(() => {
+                if(Math.random() > 0.7) {
+                    revenue += Math.random() * 0.5;
+                    revenueClicks += Math.floor(Math.random() * 3);
+                    localStorage.setItem('instaGalaxy_revenue', revenue.toFixed(2));
+                    localStorage.setItem('instaGalaxy_revenueClicks', revenueClicks);
+                    updateRevenue();
+                }
+            }, 10000);
+        }
+
+        function withdrawRevenue(e) {
+            triggerMagic(e.target, e);
+            playSound('success');
+            
+            if(revenue < 50) {
+                showToast('⚠️ Minimum 50€ pour retrait');
+                return;
+            }
+            
+            launchConfettis();
+            showToast('🏦 Demande de retrait envoyée !');
+            
+            // Simulation
+            setTimeout(() => {
+                revenue = 0;
+                localStorage.setItem('instaGalaxy_revenue', '0');
+                updateRevenue();
+            }, 2000);
+        }
+
+        // 🎬 Posts
+        function renderPosts() {
+            const grid = document.getElementById('postsGrid');
+            grid.innerHTML = '';
+            
+            CONFIG.posts.forEach(post => {
+                const item = document.createElement('div');
+                item.className = 'post-item';
+                item.innerHTML = `
+                    ${post.emoji}
+                    <div class="post-overlay">
+                        <div class="post-stat">❤️ ${formatNumber(post.likes)}</div>
+                        <div class="post-stat">💬 ${formatNumber(post.comments)}</div>
+                    </div>
+                `;
+                item.onclick = (e) => {
+                    triggerMagic(item, e);
+                    showToast('📸 Ouverture du post...');
+                };
+                grid.appendChild(item);
+            });
+        }
+
+        function setPostTab(tab, e) {
+            triggerMagic(tab, e);
+            playSound('click');
+            document.querySelectorAll('.post-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            showToast(`📂 ${tab.dataset.tab === 'posts' ? 'Posts' : tab.dataset.tab === 'reels' ? 'Reels' : 'Enregistrés'}`);
+        }
+
+        // ⚙️ Paramètres
+        function toggleSound(e) {
+            triggerMagic(e.target, e);
+            soundEnabled = !soundEnabled;
+            localStorage.setItem('instaGalaxy_sound', soundEnabled);
+            e.target.classList.toggle('active', soundEnabled);
+            showToast(soundEnabled ? '🔊 Son activé' : '🔇 Son désactivé');
+        }
+
+        function toggleVibrate(e) {
+            triggerMagic(e.target, e);
+            vibrateEnabled = !vibrateEnabled;
+            localStorage.setItem('instaGalaxy_vibrate', vibrateEnabled);
+            e.target.classList.toggle('active', vibrateEnabled);
+            showToast(vibrateEnabled ? '📳 Vibration activée' : '📳 Vibration désactivée');
+        }
+
+        function updateToggles() {
+            document.getElementById('soundToggle').classList.toggle('active', soundEnabled);
+            document.getElementById('vibrateToggle').classList.toggle('active', vibrateEnabled);
+        }
+
+        function logout(e) {
+            triggerMagic(e.target, e);
+            playSound('click');
+            
+            if(confirm('🚪 Veux-tu vraiment te déconnecter ?')) {
+                showToast('👋 À bientôt sur InstaGalaxy !');
+                // Ici: rediriger vers page login
+                // window.location = 'login.html';
+            }
+        }
+
+        // 🧭 Navigation
+        function navigateTo(item, e) {
+            triggerMagic(item, e);
+            playSound('click');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            item.classList.add('active');
+            
+            const p = item.dataset.page;
+            if(p === 'home') showToast('🏠 Accueil...');
+            else if(p === 'search') showToast('🔍 Recherche...');
+            else if(p === 'reels') showToast('🎬 Reels...');
+            else if(p === 'shop') showToast('🛍️ Boutique...');
+            else if(p === 'profile') showToast('👤 Tu es sur ton Profil !');
+            
+            item.classList.remove('has-notification');
+            item.querySelector('.badge-number')?.remove();
+        }
+
+        // ✨ Stars
+        function createStars(x, y, color = '#FFD700') {
+            const em = ['✨', '⭐', '🌟', '💫', '🎇', '💖', '👤'];
+            for(let i = 0; i < 14; i++) {
+                const s = document.createElement('div');
+                s.className = 'magic-star';
+                s.textContent = em[Math.floor(Math.random() * em.length)];
+                s.style.left = x + 'px';
+                s.style.top = y + 'px';
+                s.style.color = color;
+                s.style.setProperty('--tx', (Math.random() - 0.5) * 180 + 'px');
+                s.style.setProperty('--ty', (Math.random() - 0.5) * 180 - 100 + 'px');
+                s.style.setProperty('--rot', (Math.random() - 0.5) * 720 + 'deg');
+                document.body.appendChild(s);
+                setTimeout(() => s.remove(), 1000);
+            }
+        }
+
+        // 🎊 Confettis
+        function launchConfettis() {
+            const cols = ['#ff3040', '#f09433', '#00FFFF', '#FFD700', '#bc1888', '#00ff00', '#667eea'];
+            for(let i = 0; i < 80; i++) {
+                setTimeout(() => {
+                    const c = document.createElement('div');
+                    c.className = 'confetti';
+                    c.style.left = Math.random() * 100 + 'vw';
+                    c.style.background = cols[Math.floor(Math.random() * cols.length)];
+                    c.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+                    document.body.appendChild(c);
+                    setTimeout(() => c.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        // 🔔 Toast
+        function showToast(msg) {
+            let t = document.getElementById('toast');
+            if(!t) {
+                t = document.createElement('div');
+                t.id = 'toast';
+                document.body.appendChild(t);
+            }
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2200);
+        }
+
+        // 🔢 Utils
+        function formatNumber(n) {
+            if(n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+            if(n >= 1000) return (n / 1000).toFixed(1) + 'k';
+            return n.toString();
+        }
+
+        // ✨ Magic feedback
+        function triggerMagic(el, e) {
+            if(vibrateEnabled && navigator.vibrate) navigator.vibrate(25);
+            el.classList.add('shaking');
+            setTimeout(() => el.classList.remove('shaking'), 150);
+            
+            if(el.classList.contains('nav-item') || el.classList.contains('logo')) {
+                const r = el.getBoundingClientRect();
+                for(let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        createStars(
+                            r.left + Math.random() * r.width,
+                            r.top + Math.random() * r.height,
+                            ['#FFD700', '#bc1888', '#00FFFF', '#667eea'][Math.floor(Math.random() * 4)]
+                        );
+                    }, i * 50);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

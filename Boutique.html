@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🛍️ InstaGalaxy - Boutique</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #000;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 🎨 HEADER */
+        .top-bar {
+            height: 55px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            backdrop-filter: blur(15px);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.3rem;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '✨';
+            position: absolute;
+            right: -18px;
+            top: -3px;
+            font-size: 0.8rem;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.7; transform: scale(0.8) rotate(15deg); }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* 🤖 BOUTON IA */
+        .ai-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 20px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+
+        .ai-button:active { transform: scale(0.92); }
+        .ai-button .ai-icon { font-size: 1.1rem; }
+        .ai-button .ai-label { font-size: 0.75rem; font-weight: 700; color: white; white-space: nowrap; }
+        .ai-button .ai-arrow { font-size: 0.7rem; opacity: 0.8; animation: bounceArrow 1.5s ease-in-out infinite; }
+        @keyframes bounceArrow { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+
+        .header-btn {
+            background: none; border: none; font-size: 1.4rem; cursor: pointer; color: white;
+            position: relative; transition: transform 0.1s; padding: 5px;
+        }
+        .header-btn:active { transform: scale(0.85); }
+        .header-btn .badge {
+            position: absolute; top: 2px; right: 2px; background: #ff3040; color: white;
+            font-size: 0.65rem; font-weight: bold; padding: 2px 5px; border-radius: 10px;
+            min-width: 16px; text-align: center; animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+        /* 🛍️ CONTENU PRINCIPAL */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-top: 55px;
+            padding-bottom: 65px;
+            position: relative;
+        }
+
+        /* 🏷️ BANNIÈRE PROMO */
+        .promo-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f09433 100%);
+            padding: 20px 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promo-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate { to { transform: rotate(360deg); } }
+
+        .promo-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .promo-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .promo-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        /* 🎨 FILTRES CATÉGORIES */
+        .category-filters {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            background: #000;
+            position: sticky;
+            top: 55px;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .category-filters::-webkit-scrollbar { display: none; }
+
+        .category-chip {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .category-chip:active { transform: scale(0.95); }
+
+        .category-chip.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+        }
+
+        /* 🛒 GRILLE PRODUITS */
+        .products-section {
+            padding: 15px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .product-card {
+            background: linear-gradient(135deg, rgba(30,30,50,0.8) 0%, rgba(20,20,40,0.9) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .product-card:active { transform: scale(0.97); }
+
+        .product-card:hover {
+            border-color: rgba(102,126,234,0.5);
+            box-shadow: 0 5px 20px rgba(102,126,234,0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(135deg, #ff3040, #ff6b6b);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 8px;
+            z-index: 2;
+        }
+
+        .product-wishlist {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.6);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 2;
+            backdrop-filter: blur(5px);
+        }
+
+        .product-wishlist:active { transform: scale(0.9); }
+        .product-wishlist.active { color: #ff3040; }
+
+        .product-info {
+            padding: 12px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .price-current {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #f09433;
+        }
+
+        .price-old {
+            font-size: 0.8rem;
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        .stars { color: #FFD700; }
+
+        .add-to-cart-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .add-to-cart-btn:active { transform: scale(0.96); }
+        .add-to-cart-btn.added {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+        }
+
+        /* 🛒 PANIER FLOTTANT */
+        .cart-float {
+            position: fixed;
+            bottom: 85px;
+            right: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            z-index: 150;
+            box-shadow: 0 5px 25px rgba(102,126,234,0.5);
+            transition: all 0.3s;
+            animation: cartPulse 2s ease-in-out infinite;
+        }
+
+        .cart-float:active { transform: scale(0.95); }
+
+        @keyframes cartPulse {
+            0%, 100% { box-shadow: 0 5px 25px rgba(102,126,234,0.5); }
+            50% { box-shadow: 0 5px 35px rgba(102,126,234,0.8); }
+        }
+
+        .cart-float .cart-icon {
+            font-size: 1.5rem;
+            position: relative;
+        }
+
+        .cart-float .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff3040;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .cart-float .cart-total {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        /* 🛒 MODAL PANIER */
+        .cart-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            justify-content: flex-end;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .cart-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .cart-modal {
+            background: linear-gradient(180deg, #1a1a2e 0%, #0f0f23 100%);
+            width: 90%;
+            max-width: 400px;
+            height: 100%;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-modal-overlay.active .cart-modal {
+            transform: translateX(0);
+        }
+
+        .cart-header {
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .cart-item-image {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: #f09433;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 8px;
+            width: 30px;
+            height: 30px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-btn:active { transform: scale(0.9); }
+
+        .qty-value {
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: #ff3040;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .cart-footer {
+            padding: 20px 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.3);
+        }
+
+        .cart-summary {
+            margin-bottom: 15px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .summary-row.total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #f09433;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #f09433 0%, #bc1888 100%);
+            border: none;
+            border-radius: 15px;
+            padding: 15px;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .checkout-btn:active { transform: scale(0.97); }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-cart-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-cart-text {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        /* 🎨 ANIMATIONS */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-2px, 0) rotate(-1.5deg); }
+            40% { transform: translate(2px, -1px) rotate(1deg); }
+            60% { transform: translate(-1px, 2px) rotate(0deg); }
+            80% { transform: translate(1px, -2px) rotate(-1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        .shaking { animation: shake 0.22s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+        /* ✨ Étoiles magiques */
+        .magic-star {
+            position: fixed; font-size: 26px; pointer-events: none;
+            animation: starFly 1s ease-out forwards; z-index: 1000; opacity: 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+        @keyframes starFly {
+            0% { transform: translate(0, 0) scale(0.2) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.6) rotate(var(--rot)); opacity: 0; }
+        }
+
+        /* 🎊 Confettis */
+        .confetti {
+            position: fixed; width: 10px; height: 10px; pointer-events: none;
+            animation: confettiFall 2.5s ease-out forwards; z-index: 1001;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* 🧭 BOTTOM NAV */
+        .bottom-nav {
+            height: 65px;
+            background: linear-gradient(0deg, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.9) 100%);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            backdrop-filter: blur(15px);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 8px 5px;
+            cursor: pointer;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.2s;
+            position: relative;
+            font-size: 1.35rem;
+            flex: 1;
+            max-width: 70px;
+        }
+
+        .nav-item:active { transform: scale(0.92); color: white; }
+        .nav-item.active { color: white; }
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: 2px; width: 22px; height: 3px;
+            background: linear-gradient(90deg, #f09433, #bc1888); border-radius: 3px;
+            animation: underlineGlow 2s ease-in-out infinite;
+        }
+        @keyframes underlineGlow {
+            0%, 100% { opacity: 1; box-shadow: 0 0 5px rgba(188,24,136,0.5); }
+            50% { opacity: 0.8; box-shadow: 0 0 12px rgba(240,148,51,0.8); }
+        }
+        .nav-label { font-size: 0.65rem; font-weight: 500; opacity: 0.85; }
+        .nav-item.active .nav-label { opacity: 1; font-weight: 600; }
+
+        /* 🔔 Notifications */
+        .nav-item.has-notification::before {
+            content: ''; position: absolute; top: 8px; right: 12px;
+            width: 9px; height: 9px; background: #ff3040; border-radius: 50%;
+            border: 2px solid #000; animation: notificationPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes notificationPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.25); opacity: 0.9; }
+        }
+        .nav-item .badge-number {
+            position: absolute; top: 5px; right: 10px; background: #ff3040;
+            color: white; font-size: 0.6rem; font-weight: bold;
+            padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* 🔔 Toast */
+        #toast {
+            position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%);
+            background: rgba(30,30,50,0.95); color: white; padding: 12px 24px;
+            border-radius: 30px; font-size: 0.9rem; z-index: 1000; opacity: 0;
+            transition: opacity 0.3s, transform 0.3s; backdrop-filter: blur(10px);
+            border: 1px solid rgba(188,24,136,0.4); box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            pointer-events: none;
+        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* 📱 Responsive */
+        @media (max-height: 700px) {
+            .top-bar { height: 50px; }
+            .bottom-nav { height: 58px; }
+            .main-content { padding-top: 50px; padding-bottom: 58px; }
+            .cart-float { bottom: 75px; }
+            #toast { bottom: 75px; }
+            .ai-button .ai-label { display: none; }
+        }
+        @media (max-width: 380px) {
+            .ai-button .ai-label { display: none; }
+            .logo { font-size: 1.1rem; }
+            .products-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🎨 HEADER -->
+    <header class="top-bar">
+        <div class="logo" onclick="triggerMagic(this, event)">InstaGalaxy</div>
+        <button class="ai-button" id="aiButton" onclick="openAIModal(event)">
+            <span class="ai-icon">🤖</span>
+            <span class="ai-label" id="aiLabel">Qwen</span>
+            <span class="ai-arrow">→</span>
+        </button>
+        <div class="header-actions">
+            <button class="header-btn" onclick="openCart(event)" title="Panier">
+                🛒<span class="badge" id="headerCartCount">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 🛍️ CONTENU PRINCIPAL -->
+    <main class="main-content">
+        
+        <!-- 🏷️ BANNIÈRE PROMO -->
+        <div class="promo-banner">
+            <div class="promo-text">
+                <div class="promo-title">🎉 -30% sur tout le site !</div>
+                <div class="promo-subtitle">Code: INSTA30 • Valable 48h ⏰</div>
+            </div>
+        </div>
+
+        <!-- 🎨 FILTRES CATÉGORIES -->
+        <div class="category-filters">
+            <div class="category-chip active" data-category="all" onclick="setCategory(this, event)">📊 Tout</div>
+            <div class="category-chip" data-category="tech" onclick="setCategory(this, event)">📱 Tech</div>
+            <div class="category-chip" data-category="mode" onclick="setCategory(this, event)">👗 Mode</div>
+            <div class="category-chip" data-category="maison" onclick="setCategory(this, event)">🏠 Maison</div>
+            <div class="category-chip" data-category="beaute" onclick="setCategory(this, event)">💄 Beauté</div>
+            <div class="category-chip" data-category="sport" onclick="setCategory(this, event)">⚽ Sport</div>
+        </div>
+
+        <!-- 🛒 PRODUITS -->
+        <div class="products-section">
+            <div class="section-header">
+                <div class="section-title">🔥 Tendances</div>
+                <div style="font-size: 0.85rem; opacity: 0.7;" id="productCount">0 produits</div>
+            </div>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+
+    </main>
+
+    <!-- 🛒 PANIER FLOTTANT -->
+    <div class="cart-float" id="cartFloat" onclick="openCart(event)">
+        <div class="cart-icon">
+            🛒
+            <span class="cart-count" id="floatCartCount">0</span>
+        </div>
+        <span class="cart-total" id="floatCartTotal">0€</span>
+    </div>
+
+    <!-- 🛒 MODAL PANIER -->
+    <div class="cart-modal-overlay" id="cartModalOverlay">
+        <div class="cart-modal">
+            <div class="cart-header">
+                <div class="cart-title">🛒 Mon Panier</div>
+                <button class="cart-close" onclick="closeCart(event)">✕</button>
+            </div>
+            <div class="cart-items" id="cartItems"></div>
+            <div class="cart-footer">
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Sous-total</span>
+                        <span id="subtotal">0€</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Livraison</span>
+                        <span id="shipping">Gratuite</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span id="cartTotal">0€</span>
+                    </div>
+                </div>
+                <button class="checkout-btn" onclick="checkout(event)">
+                    💳 Commander
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🧭 BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/MaxUltimate.html'><div class="nav-item" data-page="home" onclick="navigateTo(this, event)">🏠<span class="nav-label">Accueil</span></div><a/>
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/Recherche.html'><div class="nav-item" data-page="search" onclick="navigateTo(this, event)">🔍<span class="nav-label">Recherche</span></div></a>
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/re2ls.html'><div class="nav-item" data-page="reels" onclick="navigateTo(this, event)">🎬<span class="nav-label">Reels</span></div></a>
+        <div class="nav-item active" data-page="shop" onclick="navigateTo(this, event)">🛍️<span class="nav-label">Boutique</span></div>
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/Profil.html'><div class="nav-item" data-page="profile" onclick="navigateTo(this, event)">👤<span class="nav-label">Profil</span></div></a>
+    </nav>
+
+    <!-- 🤖 MODAL IA (simplifié) -->
+    <div class="ai-modal-overlay" id="aiModalOverlay" style="display:none;">
+        <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:25px;padding:25px;width:90%;max-width:400px;border:1px solid rgba(255,255,255,0.15);">
+            <div style="text-align:center;margin-bottom:20px;">
+                <div style="font-size:3rem;margin-bottom:10px;">🤖</div>
+                <h2 style="font-size:1.4rem;font-weight:800;background:linear-gradient(45deg,#667eea,#764ba2,#f09433);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Choisis ton IA</h2>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                <div class="ai-option" data-ai="qwen" onclick="selectAI(this)" style="background:rgba(255,255,255,0.08);border:2px solid #667eea;border-radius:15px;padding:15px;display:flex;align-items:center;gap:15px;cursor:pointer;">
+                    <div style="font-size:2rem;width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.1);border-radius:12px;">💜</div>
+                    <div style="flex:1;"><div style="font-weight:700;">Qwen</div><div style="font-size:0.75rem;opacity:0.7;">IA polyvalente</div></div>
+                    <div style="font-size:1.3rem;color:#667eea;">✅</div>
+                </div>
+                <div class="ai-option" data-ai="chatgpt" onclick="selectAI(this)" style="background:rgba(255,255,255,0.08);border:2px solid transparent;border-radius:15px;padding:15px;display:flex;align-items:center;gap:15px;cursor:pointer;">
+                    <div style="font-size:2rem;width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.1);border-radius:12px;">🟢</div>
+                    <div style="flex:1;"><div style="font-weight:700;">ChatGPT</div><div style="font-size:0.75rem;opacity:0.7;">OpenAI</div></div>
+                    <div style="font-size:1.3rem;color:#667eea;opacity:0;">✅</div>
+                </div>
+            </div>
+            <div style="margin-top:20px;display:flex;gap:10px;">
+                <button onclick="closeAIModal(event)" style="flex:1;padding:14px;border-radius:12px;border:none;font-weight:700;background:rgba(255,255,255,0.1);color:white;">Annuler</button>
+                <button onclick="confirmAISelection(event)" style="flex:1;padding:14px;border-radius:12px;border:none;font-weight:700;background:linear-gradient(135deg,#667eea,#764ba2);color:white;">Confirmer ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⚙️ CONFIG
+        const CONFIG = {
+            products: [
+                { id:1, name:'Écouteurs Pro', category:'tech', price:79.99, oldPrice:129.99, emoji:'🎧', rating:4.8, reviews:2341, badge:'-38%' },
+                { id:2, name:'Montre Connectée', category:'tech', price:149.99, oldPrice:199.99, emoji:'⌚', rating:4.6, reviews:1892, badge:'Best Seller' },
+                { id:3, name:'Sac à Main Luxe', category:'mode', price:89.99, oldPrice:149.99, emoji:'👜', rating:4.9, reviews:3421, badge:'-40%' },
+                { id:4, name:'Sneakers Urban', category:'mode', price:69.99, oldPrice:99.99, emoji:'👟', rating:4.5, reviews:1567, badge:'' },
+                { id:5, name:'Lampe LED Smart', category:'maison', price:34.99, oldPrice:54.99, emoji:'💡', rating:4.7, reviews:987, badge:'Nouveau' },
+                { id:6, name:'Coussin Déco', category:'maison', price:24.99, oldPrice:39.99, emoji:'🛋️', rating:4.4, reviews:654, badge:'' },
+                { id:7, name:'Palette Maquillage', category:'beaute', price:44.99, oldPrice:69.99, emoji:'💄', rating:4.8, reviews:2156, badge:'-36%' },
+                { id:8, name:'Sérum Visage', category:'beaute', price:29.99, oldPrice:49.99, emoji:'✨', rating:4.6, reviews:1432, badge:'' },
+                { id:9, name:'Tapis Yoga', category:'sport', price:39.99, oldPrice:59.99, emoji:'🧘', rating:4.7, reviews:876, badge:'Populaire' },
+                { id:10, name:'Haltères Set', category:'sport', price:54.99, oldPrice:79.99, emoji:'🏋️', rating:4.5, reviews:543, badge:'' },
+                { id:11, name:'Smartphone X', category:'tech', price:599.99, oldPrice:799.99, emoji:'📱', rating:4.9, reviews:5678, badge:'-25%' },
+                { id:12, name:'Casque VR', category:'tech', price:299.99, oldPrice:449.99, emoji:'🥽', rating:4.6, reviews:1234, badge:'Hot' }
+            ],
+            affiliateLinks: {
+                tech: 'https://amazon.fr/s?k=tech&tag=TON_ID_AFFILIE',
+                mode: 'https://amazon.fr/s?k=mode&tag=TON_ID_AFFILIE',
+                maison: 'https://amazon.fr/s?k=maison&tag=TON_ID_AFFILIE',
+                beaute: 'https://amazon.fr/s?k=beaute&tag=TON_ID_AFFILIE',
+                sport: 'https://amazon.fr/s?k=sport&tag=TON_ID_AFFILIE'
+            }
+        };
+
+        // 🤖 IA
+        const AI_OPTIONS = {
+            qwen: {name:'Qwen',icon:'💜',url:'https://chat.qwen.ai/'},
+            chatgpt: {name:'ChatGPT',icon:'🟢',url:'https://chat.openai.com/'},
+            claude: {name:'Claude',icon:'🟠',url:'https://claude.ai/'},
+            gemini: {name:'Gemini',icon:'🔵',url:'https://gemini.google.com/'},
+            copilot: {name:'Copilot',icon:'🟣',url:'https://copilot.microsoft.com/'},
+            perplexity: {name:'Perplexity',icon:'🔷',url:'https://www.perplexity.ai/'}
+        };
+
+        // 🧠 État
+        let cart = JSON.parse(localStorage.getItem('instaGalaxy_cart') || '[]');
+        let wishlist = JSON.parse(localStorage.getItem('instaGalaxy_wishlist') || '[]');
+        let selectedCategory = 'all';
+        let selectedAI = localStorage.getItem('instaGalaxy_selectedAI') || 'qwen';
+        let tempSelectedAI = selectedAI;
+        let soundEnabled = localStorage.getItem('instaGalaxy_sound') === 'true';
+
+        // 🎵 Sons
+        const SOUNDS = {
+            add: 'https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3',
+            remove: 'https://assets.mixkit.co/sfx/preview/mixkit-software-interface-click-2447.mp3',
+            checkout: 'https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3',
+            ai: 'https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-beep-2292.mp3'
+        };
+
+        function playSound(name) { if(!soundEnabled) return; const a=new Audio(SOUNDS[name]); a.volume=0.3; a.play().catch(()=>{}); }
+
+        // 🎯 Init
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAIButton();
+            renderProducts();
+            updateCartUI();
+            updateWishlistUI();
+        });
+
+        // 🤖 IA Button
+        function updateAIButton() {
+            const ai = AI_OPTIONS[selectedAI];
+            if(ai) {
+                document.getElementById('aiLabel').textContent = ai.name;
+                document.querySelector('#aiButton .ai-icon').textContent = ai.icon;
+            }
+        }
+        function openAIModal(e) { triggerMagic(e.currentTarget,e); playSound('ai'); tempSelectedAI=selectedAI; updateModalSelection(); document.getElementById('aiModalOverlay').style.display='flex'; setTimeout(()=>document.getElementById('aiModalOverlay').style.opacity='1',10); }
+        function closeAIModal(e) { const o=document.getElementById('aiModalOverlay'); o.style.opacity='0'; setTimeout(()=>o.style.display='none',300); }
+        function updateModalSelection() { document.querySelectorAll('.ai-option').forEach(opt => { const sel=opt.dataset.ai===tempSelectedAI; opt.style.borderColor=sel?'#667eea':'transparent'; opt.querySelector('div:last-child').style.opacity=sel?'1':'0'; }); }
+        function selectAI(opt) { triggerMagic(opt,event); playSound('add'); tempSelectedAI=opt.dataset.ai; updateModalSelection(); }
+        function confirmAISelection(e) { triggerMagic(e.target,e); playSound('checkout'); selectedAI=tempSelectedAI; localStorage.setItem('instaGalaxy_selectedAI',selectedAI); updateAIButton(); closeAIModal(e); showToast(`🤖 ${AI_OPTIONS[selectedAI].name} sélectionné !`); setTimeout(()=>window.open(AI_OPTIONS[selectedAI].url,'_blank'),1000); }
+
+        // 🛒 Produits
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+            
+            const filtered = selectedCategory === 'all' 
+                ? CONFIG.products 
+                : CONFIG.products.filter(p => p.category === selectedCategory);
+
+            document.getElementById('productCount').textContent = `${filtered.length} produits`;
+
+            filtered.forEach(product => {
+                const isInWishlist = wishlist.includes(product.id);
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-image">
+                        ${product.emoji}
+                        ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
+                        <button class="product-wishlist ${isInWishlist?'active':''}" onclick="toggleWishlist(${product.id}, event)">
+                            ${isInWishlist ? '❤️' : '🤍'}
+                        </button>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">
+                            <span class="price-current">${product.price}€</span>
+                            ${product.oldPrice ? `<span class="price-old">${product.oldPrice}€</span>` : ''}
+                        </div>
+                        <div class="product-rating">
+                            <span class="stars">${'⭐'.repeat(Math.floor(product.rating))}</span>
+                            <span style="opacity:0.7">(${product.reviews})</span>
+                        </div>
+                        <button class="add-to-cart-btn" onclick="addToCart(${product.id}, event)">
+                            🛒 Ajouter
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function setCategory(chip, e) {
+            triggerMagic(chip, e);
+            document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            selectedCategory = chip.dataset.category;
+            renderProducts();
+            showToast(`📂 Catégorie: ${chip.textContent}`);
+        }
+
+        // 🛒 Panier
+        function addToCart(productId, e) {
+            triggerMagic(e.target, e);
+            playSound('add');
+            
+            const product = CONFIG.products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if(existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            saveCart();
+            updateCartUI();
+            
+            // Animation bouton
+            e.target.classList.add('added');
+            e.target.innerHTML = '✅ Ajouté';
+            setTimeout(() => {
+                e.target.classList.remove('added');
+                e.target.innerHTML = '🛒 Ajouter';
+            }, 1500);
+            
+            showToast(`✅ ${product.name} ajouté au panier !`);
+            createStars(e.clientX, e.clientY, '#00b894');
+        }
+
+        function removeFromCart(productId, e) {
+            triggerMagic(e.target, e);
+            playSound('remove');
+            cart = cart.filter(item => item.id !== productId);
+            saveCart();
+            updateCartUI();
+            showToast('🗑️ Produit retiré');
+        }
+
+        function updateQuantity(productId, delta, e) {
+            triggerMagic(e.target, e);
+            const item = cart.find(item => item.id === productId);
+            if(item) {
+                item.quantity += delta;
+                if(item.quantity <= 0) {
+                    removeFromCart(productId, e);
+                    return;
+                }
+                saveCart();
+                updateCartUI();
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem('instaGalaxy_cart', JSON.stringify(cart));
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            document.getElementById('headerCartCount').textContent = totalItems;
+            document.getElementById('floatCartCount').textContent = totalItems;
+            document.getElementById('floatCartTotal').textContent = totalPrice.toFixed(2) + '€';
+            document.getElementById('subtotal').textContent = totalPrice.toFixed(2) + '€';
+            document.getElementById('cartTotal').textContent = totalPrice.toFixed(2) + '€';
+            
+            // Panier modal
+            const cartItems = document.getElementById('cartItems');
+            if(cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="empty-cart">
+                        <div class="empty-cart-icon">🛒</div>
+                        <div class="empty-cart-text">Ton panier est vide</div>
+                        <button class="add-to-cart-btn" onclick="closeCart(event)" style="max-width:200px;margin:0 auto;">
+                            🛍️ Continuer mes achats
+                        </button>
+                    </div>
+                `;
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-image">${item.emoji}</div>
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">${item.price}€</div>
+                            <div class="cart-item-quantity">
+                                <button class="qty-btn" onclick="updateQuantity(${item.id}, -1, event)">-</button>
+                                <span class="qty-value">${item.quantity}</span>
+                                <button class="qty-btn" onclick="updateQuantity(${item.id}, 1, event)">+</button>
+                            </div>
+                        </div>
+                        <button class="cart-item-remove" onclick="removeFromCart(${item.id}, event)">🗑️</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function openCart(e) {
+            triggerMagic(e.target, e);
+            document.getElementById('cartModalOverlay').classList.add('active');
+        }
+
+        function closeCart(e) {
+            triggerMagic(e.target, e);
+            document.getElementById('cartModalOverlay').classList.remove('active');
+        }
+
+        function checkout(e) {
+            triggerMagic(e.target, e);
+            playSound('checkout');
+            
+            if(cart.length === 0) {
+                showToast('🛒 Ton panier est vide !');
+                return;
+            }
+            
+            launchConfettis();
+            showToast('🎉 Commande validée ! (Démo)');
+            
+            // Simulation de redirection vers paiement
+            setTimeout(() => {
+                showToast('💳 Redirection vers le paiement...');
+                // Ici tu peux mettre ton lien d'affiliation !
+                // window.open(CONFIG.affiliateLinks['all'], '_blank');
+            }, 1500);
+            
+            // Vider le panier (optionnel)
+            // cart = [];
+            // saveCart();
+            // updateCartUI();
+            // closeCart(e);
+        }
+
+        // ❤️ Wishlist
+        function toggleWishlist(productId, e) {
+            triggerMagic(e.target, e);
+            playSound('add');
+            
+            const index = wishlist.indexOf(productId);
+            const btn = e.target;
+            
+            if(index === -1) {
+                wishlist.push(productId);
+                btn.textContent = '❤️';
+                btn.classList.add('active');
+                showToast('💖 Ajouté aux favoris !');
+                createStars(e.clientX, e.clientY, '#ff3040');
+            } else {
+                wishlist.splice(index, 1);
+                btn.textContent = '🤍';
+                btn.classList.remove('active');
+                showToast('🤍 Retiré des favoris');
+            }
+            
+            localStorage.setItem('instaGalaxy_wishlist', JSON.stringify(wishlist));
+        }
+
+        function updateWishlistUI() {
+            // Sera mis à jour au rendu des produits
+        }
+
+        // ✨ Stars
+        function createStars(x,y,color='#FFD700') {
+            const em = ['✨','⭐','🌟','💫','🎇','💖','🛍️'];
+            for(let i=0;i<14;i++) {
+                const s=document.createElement('div'); s.className='magic-star';
+                s.textContent=em[Math.floor(Math.random()*em.length)];
+                s.style.left=x+'px'; s.style.top=y+'px'; s.style.color=color;
+                s.style.setProperty('--tx',(Math.random()-0.5)*180+'px');
+                s.style.setProperty('--ty',(Math.random()-0.5)*180-100+'px');
+                s.style.setProperty('--rot',(Math.random()-0.5)*720+'deg');
+                document.body.appendChild(s); setTimeout(()=>s.remove(),1000);
+            }
+        }
+
+        // 🎊 Confettis
+        function launchConfettis() {
+            const cols = ['#ff3040','#f09433','#00FFFF','#FFD700','#bc1888','#00ff00','#667eea'];
+            for(let i=0;i<80;i++) setTimeout(()=>{
+                const c=document.createElement('div'); c.className='confetti';
+                c.style.left=Math.random()*100+'vw'; c.style.background=cols[Math.floor(Math.random()*cols.length)];
+                c.style.animationDuration=(Math.random()*1.5+1.5)+'s';
+                document.body.appendChild(c); setTimeout(()=>c.remove(),3000);
+            }, i*30);
+        }
+
+        // 🧭 Nav
+        function navigateTo(item, e) {
+            triggerMagic(item,e); playSound('add');
+            document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+            item.classList.add('active');
+            const p = item.dataset.page;
+            if(p==='home') { showToast('🏠 Accueil...'); }
+            else if(p==='search') { showToast('🔍 Recherche...'); }
+            else if(p==='reels') { showToast('🎬 Reels...'); }
+            else if(p==='shop') { showToast('🛍️ Tu es dans la Boutique !'); }
+            else if(p==='profile') { showToast('👤 Profil...'); }
+            item.classList.remove('has-notification'); item.querySelector('.badge-number')?.remove();
+        }
+
+        // 🔔 Toast
+        function showToast(msg) {
+            let t = document.getElementById('toast');
+            if(!t) { t=document.createElement('div'); t.id='toast'; document.body.appendChild(t); }
+            t.textContent = msg; t.classList.add('show');
+            setTimeout(()=>t.classList.remove('show'), 2200);
+        }
+
+        // ✨ Magic feedback
+        function triggerMagic(el, e) {
+            if(navigator.vibrate) navigator.vibrate(25);
+            el.classList.add('shaking'); setTimeout(()=>el.classList.remove('shaking'),150);
+            if(el.classList.contains('nav-item')||el.classList.contains('logo')||el.classList.contains('ai-button')) {
+                const r = el.getBoundingClientRect();
+                for(let i=0;i<5;i++) setTimeout(()=>createStars(r.left+Math.random()*r.width, r.top+Math.random()*r.height, ['#FFD700','#bc1888','#00FFFF','#667eea'][Math.floor(Math.random()*4)]), i*50);
+            }
+        }
+
+        // 🤖 Close modal on escape/outside
+        document.addEventListener('keydown', e=>{ if(e.key==='Escape') { closeAIModal(e); closeCart(e); } });
+        document.getElementById('aiModalOverlay').addEventListener('click', e=>{ if(e.target.id==='aiModalOverlay') closeAIModal(e); });
+        document.getElementById('cartModalOverlay').addEventListener('click', e=>{ if(e.target.id==='cartModalOverlay') closeCart(e); });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🔍 InstaGalaxy - Recherche</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #000;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 🎨 HEADER */
+        .top-bar {
+            height: 55px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            backdrop-filter: blur(15px);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.3rem;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '✨';
+            position: absolute;
+            right: -18px;
+            top: -3px;
+            font-size: 0.8rem;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.7; transform: scale(0.8) rotate(15deg); }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* 🤖 BOUTON IA */
+        .ai-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 20px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .ai-button:active { transform: scale(0.92); }
+        
+        .ai-button .ai-icon {
+            font-size: 1.1rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .ai-button .ai-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .ai-button .ai-arrow {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            animation: bounceArrow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes bounceArrow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(3px); }
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: white;
+            position: relative;
+            transition: transform 0.1s;
+            padding: 5px;
+        }
+
+        .header-btn:active { transform: scale(0.85); }
+        
+        .header-btn .badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #ff3040;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 10px;
+            min-width: 16px;
+            text-align: center;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        /* 🔍 CONTENU PRINCIPAL */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-top: 55px;
+            padding-bottom: 65px;
+            position: relative;
+        }
+
+        /* 🔍 BARRE DE RECHERCHE */
+        .search-container {
+            padding: 15px;
+            position: sticky;
+            top: 55px;
+            background: #000;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 10px 15px;
+            gap: 10px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .search-box:focus-within {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(188,24,136,0.5);
+            box-shadow: 0 0 20px rgba(188,24,136,0.3);
+        }
+
+        .search-box .search-icon {
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        .search-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .search-box .clear-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+            padding: 5px;
+        }
+
+        .search-box .clear-btn.visible {
+            opacity: 1;
+        }
+
+        /* 🎨 FILTRES DE RECHERCHE */
+        .search-filters {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .search-filters::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-chip {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-chip:active {
+            transform: scale(0.95);
+        }
+
+        .filter-chip.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+        }
+
+        /* 📊 SECTION TITLES */
+        .section-title {
+            padding: 15px 15px 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title .icon {
+            font-size: 1.3rem;
+        }
+
+        /* 🕐 HISTORIQUE DE RECHERCHE */
+        .search-history {
+            padding: 0 15px;
+            margin-bottom: 20px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .history-item:active {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .history-item .history-icon {
+            font-size: 1.2rem;
+            opacity: 0.7;
+            width: 30px;
+            text-align: center;
+        }
+
+        .history-item .history-text {
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        .history-item .history-time {
+            font-size: 0.75rem;
+            opacity: 0.5;
+        }
+
+        .history-item .delete-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 5px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .history-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .clear-history {
+            text-align: right;
+            padding: 10px 0;
+            font-size: 0.85rem;
+            color: #ff3040;
+            cursor: pointer;
+        }
+
+        /* 🔥 TENDANCES */
+        .trending-section {
+            padding: 0 15px;
+            margin-bottom: 20px;
+        }
+
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .trending-item {
+            background: linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(118,75,162,0.2) 100%);
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trending-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+
+        .trending-item:active::before {
+            transform: translateX(100%);
+        }
+
+        .trending-item:active {
+            transform: scale(0.98);
+        }
+
+        .trending-item .trending-rank {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #f09433, #bc1888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .trending-item .trending-hashtag {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+
+        .trending-item .trending-count {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* 👤 RÉSULTATS UTILISATEURS */
+        .users-section {
+            padding: 0 15px;
+            margin-bottom: 20px;
+        }
+
+        .user-result {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            cursor: pointer;
+        }
+
+        .user-result:active {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .user-result .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433, #bc1888);
+            border: 2px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .user-result .user-info {
+            flex: 1;
+        }
+
+        .user-result .user-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+
+        .user-result .user-handle {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .user-result .follow-btn-mini {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-result .follow-btn-mini:active {
+            transform: scale(0.95);
+        }
+
+        /* 🎬 RÉSULTATS VIDÉOS */
+        .videos-section {
+            padding: 0 15px;
+            margin-bottom: 20px;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+        }
+
+        .video-thumbnail {
+            aspect-ratio: 9/16;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .video-thumbnail:active {
+            transform: scale(0.95);
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-thumbnail .video-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+        }
+
+        .video-thumbnail .play-icon {
+            font-size: 0.8rem;
+        }
+
+        /* 🎨 ANIMATIONS */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-2px, 0) rotate(-1.5deg); }
+            40% { transform: translate(2px, -1px) rotate(1deg); }
+            60% { transform: translate(-1px, 2px) rotate(0deg); }
+            80% { transform: translate(1px, -2px) rotate(-1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        .shaking { animation: shake 0.22s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+        /* ✨ Étoiles magiques */
+        .magic-star {
+            position: fixed;
+            font-size: 26px;
+            pointer-events: none;
+            animation: starFly 1s ease-out forwards;
+            z-index: 1000;
+            opacity: 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+        @keyframes starFly {
+            0% { transform: translate(0, 0) scale(0.2) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.6) rotate(var(--rot)); opacity: 0; }
+        }
+
+        /* 🧭 BOTTOM NAV */
+        .bottom-nav {
+            height: 65px;
+            background: linear-gradient(0deg, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.9) 100%);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            backdrop-filter: blur(15px);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 8px 5px;
+            cursor: pointer;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.2s;
+            position: relative;
+            font-size: 1.35rem;
+            flex: 1;
+            max-width: 70px;
+        }
+
+        .nav-item:active { 
+            transform: scale(0.92); 
+            color: white;
+        }
+
+        .nav-item.active {
+            color: white;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            width: 22px;
+            height: 3px;
+            background: linear-gradient(90deg, #f09433, #bc1888);
+            border-radius: 3px;
+            animation: underlineGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes underlineGlow {
+            0%, 100% { opacity: 1; box-shadow: 0 0 5px rgba(188,24,136,0.5); }
+            50% { opacity: 0.8; box-shadow: 0 0 12px rgba(240,148,51,0.8); }
+        }
+
+        .nav-label {
+            font-size: 0.65rem;
+            font-weight: 500;
+            opacity: 0.85;
+        }
+
+        .nav-item.active .nav-label {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* 🔔 NOTIFICATIONS */
+        .nav-item.has-notification::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            width: 9px;
+            height: 9px;
+            background: #ff3040;
+            border-radius: 50%;
+            border: 2px solid #000;
+            animation: notificationPulse 1.5s ease-in-out infinite;
+        }
+
+        .nav-item.has-notification.new-content::before {
+            background: linear-gradient(45deg, #ff3040, #f09433);
+            animation: notificationPulse 1s ease-in-out infinite;
+        }
+
+        .nav-item.has-notification.message::before {
+            background: #00FFFF;
+            animation: notificationBounce 1.2s ease-in-out infinite;
+        }
+
+        @keyframes notificationPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.25); opacity: 0.9; }
+        }
+
+        @keyframes notificationBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .nav-item .badge-number {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: #ff3040;
+            color: white;
+            font-size: 0.6rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* 🔔 Toast notifications */
+        #toast {
+            position: fixed;
+            bottom: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30,30,50,0.95);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(188,24,136,0.4);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            pointer-events: none;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 🎭 États de la recherche */
+        .search-state {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .search-state.active {
+            display: block;
+        }
+
+        .search-state .state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .search-state .state-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .search-state .state-desc {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        /* 📱 Responsive */
+        @media (max-height: 700px) {
+            .top-bar { height: 50px; }
+            .bottom-nav { height: 58px; }
+            .main-content { padding-top: 50px; padding-bottom: 58px; }
+            .search-container { top: 50px; }
+            .ai-button .ai-label { display: none; }
+        }
+
+        @media (max-width: 380px) {
+            .ai-button .ai-label { display: none; }
+            .logo { font-size: 1.1rem; }
+            .trending-grid { grid-template-columns: 1fr; }
+        }
+
+        /* 🎨 Scrollbar */
+        .main-content::-webkit-scrollbar { width: 4px; }
+        .main-content::-webkit-scrollbar-track { background: transparent; }
+        .main-content::-webkit-scrollbar-thumb { 
+            background: rgba(255,255,255,0.2); 
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🎨 HEADER -->
+    <header class="top-bar">
+        <div class="logo" onclick="triggerMagic(this, event)">InstaGalaxy</div>
+        
+        <!-- 🤖 BOUTON IA -->
+        <button class="ai-button" id="aiButton" onclick="openAIModal(event)">
+            <span class="ai-icon">🤖</span>
+            <span class="ai-label" id="aiLabel">Qwen</span>
+            <span class="ai-arrow">→</span>
+        </button>
+        
+        <div class="header-actions">
+            <button class="header-btn" onclick="triggerMagic(this, event)" title="Créer">➕</button>
+            <button class="header-btn" onclick="triggerMagic(this, event)" title="Messages">
+                💬
+                <span class="badge">5</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 🔍 CONTENU PRINCIPAL -->
+    <main class="main-content" id="mainContent">
+        
+        <!-- 🔍 BARRE DE RECHERCHE -->
+        <div class="search-container">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Rechercher des vidéos, utilisateurs, hashtags..." oninput="handleSearchInput(event)" onkeypress="handleSearchKeyPress(event)">
+                <button class="clear-btn" id="clearBtn" onclick="clearSearch(event)">✕</button>
+            </div>
+        </div>
+
+        <!-- 🎨 FILTRES -->
+        <div class="search-filters">
+            <div class="filter-chip active" data-filter="all" onclick="setFilter(this, event)">
+                <span>📊</span> Tout
+            </div>
+            <div class="filter-chip" data-filter="videos" onclick="setFilter(this, event)">
+                <span>🎬</span> Vidéos
+            </div>
+            <div class="filter-chip" data-filter="users" onclick="setFilter(this, event)">
+                <span>👤</span> Utilisateurs
+            </div>
+            <div class="filter-chip" data-filter="hashtags" onclick="setFilter(this, event)">
+                <span>#️⃣</span> Hashtags
+            </div>
+            <div class="filter-chip" data-filter="audio" onclick="setFilter(this, event)">
+                <span>🎵</span> Audio
+            </div>
+        </div>
+
+        <!-- 🕐 HISTORIQUE (affiché par défaut) -->
+        <div id="historySection" class="search-history">
+            <div class="section-title">
+                <span class="icon">🕐</span>
+                <span>Récents</span>
+            </div>
+            <div id="historyList"></div>
+            <div class="clear-history" onclick="clearAllHistory(event)">Tout effacer</div>
+        </div>
+
+        <!-- 🔥 TENDANCES (affiché par défaut) -->
+        <div id="trendingSection" class="trending-section">
+            <div class="section-title">
+                <span class="icon">🔥</span>
+                <span>Tendances</span>
+            </div>
+            <div class="trending-grid" id="trendingList"></div>
+        </div>
+
+        <!-- 📊 RÉSULTATS (affiché après recherche) -->
+        <div id="resultsSection" style="display: none;">
+            
+            <!-- 👤 Utilisateurs -->
+            <div class="users-section" id="usersSection">
+                <div class="section-title">
+                    <span class="icon">👤</span>
+                    <span>Utilisateurs</span>
+                </div>
+                <div id="usersList"></div>
+            </div>
+
+            <!-- 🎬 Vidéos -->
+            <div class="videos-section" id="videosSection">
+                <div class="section-title">
+                    <span class="icon">🎬</span>
+                    <span>Vidéos</span>
+                </div>
+                <div class="videos-grid" id="videosList"></div>
+            </div>
+
+            <!-- #️⃣ Hashtags -->
+            <div class="hashtags-section" id="hashtagsSection" style="padding: 0 15px; margin-bottom: 20px;">
+                <div class="section-title">
+                    <span class="icon">#️⃣</span>
+                    <span>Hashtags</span>
+                </div>
+                <div id="hashtagsList"></div>
+            </div>
+        </div>
+
+        <!-- 🎭 État: Recherche en cours -->
+        <div class="search-state" id="searchingState">
+            <div class="state-icon">🔍</div>
+            <div class="state-title">Recherche en cours...</div>
+            <div class="state-desc">Nous trouvons les meilleurs résultats pour toi ✨</div>
+        </div>
+
+        <!-- 🎭 État: Aucun résultat -->
+        <div class="search-state" id="noResultsState">
+            <div class="state-icon">😕</div>
+            <div class="state-title">Aucun résultat</div>
+            <div class="state-desc">Essayez avec d'autres mots-clés ou vérifiez l'orthographe</div>
+        </div>
+
+    </main>
+
+    <!-- 🧭 BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/MaxUltimate.html'><div class="nav-item" data-page="home" onclick="navigateTo(this, event)">
+            🏠
+            <span class="nav-label">Accueil</span>
+        </div></a>
+        <div class="nav-item active" data-page="search" onclick="navigateTo(this, event)">
+            🔍
+            <span class="nav-label">Recherche</span>
+        </div>
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/re2ls.html'><div class="nav-item has-notification new-content" data-page="reels" onclick="navigateTo(this, event)">
+            🎬
+            <span class="nav-label">Reels</span>
+            <span class="badge-number">3</span>
+        </div></a>
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/Boutique.html'><div class="nav-item" data-page="shop" onclick="navigateTo(this, event)">
+            🛍️
+            <span class="nav-label">Boutique</span>
+        </div></a>
+        <a href='file:///C:/Users/Armand.B.S/Desktop/Secteur%20Page/Profil.html'><div class="nav-item" data-page="profile" onclick="navigateTo(this, event)">
+            👤
+            <span class="nav-label">Profil</span>
+        </div></a>
+    </nav>
+
+    <!-- 🤖 MODAL IA (même code que avant) -->
+    <div class="ai-modal-overlay" id="aiModalOverlay" style="display: none;">
+        <div class="ai-modal" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 25px; padding: 25px; width: 90%; max-width: 400px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🤖</div>
+                <h2 style="font-size: 1.4rem; font-weight: 800; background: linear-gradient(45deg, #667eea, #764ba2, #f09433); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">Choisis ton Assistant IA</h2>
+                <p style="font-size: 0.85rem; opacity: 0.7;">Sélectionne l'IA que tu veux utiliser</p>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="ai-option" data-ai="qwen" onclick="selectAI(this)" style="background: rgba(255,255,255,0.08); border: 2px solid transparent; border-radius: 15px; padding: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.2s;">
+                    <div style="font-size: 2rem; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 12px;">💜</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; font-size: 1rem; margin-bottom: 3px;">Qwen</div>
+                        <div style="font-size: 0.75rem; opacity: 0.7;">L'IA puissante et polyvalente</div>
+                    </div>
+                    <div style="font-size: 1.3rem; color: #667eea; opacity: 0;">✅</div>
+                </div>
+                <div class="ai-option" data-ai="chatgpt" onclick="selectAI(this)" style="background: rgba(255,255,255,0.08); border: 2px solid transparent; border-radius: 15px; padding: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.2s;">
+                    <div style="font-size: 2rem; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 12px;">🟢</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; font-size: 1rem; margin-bottom: 3px;">ChatGPT</div>
+                        <div style="font-size: 0.75rem; opacity: 0.7;">Le célèbre assistant OpenAI</div>
+                    </div>
+                    <div style="font-size: 1.3rem; color: #667eea; opacity: 0;">✅</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button onclick="closeAIModal(event)" style="flex: 1; padding: 14px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.9rem; cursor: pointer; background: rgba(255,255,255,0.1); color: white;">Annuler</button>
+                <button onclick="confirmAISelection(event)" style="flex: 1; padding: 14px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.9rem; cursor: pointer; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">Confirmer ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⚙️ CONFIGURATION
+        const CONFIG = {
+            searchHistoryKey: 'instaGalaxy_searchHistory',
+            maxHistoryItems: 10,
+            searchDebounce: 300
+        };
+
+        // 🤖 CONFIGURATION IA
+        const AI_OPTIONS = {
+            qwen: { name: 'Qwen', icon: '💜', url: 'https://chat.qwen.ai/' },
+            chatgpt: { name: 'ChatGPT', icon: '🟢', url: 'https://chat.openai.com/' },
+            claude: { name: 'Claude', icon: '🟠', url: 'https://claude.ai/' },
+            gemini: { name: 'Gemini', icon: '🔵', url: 'https://gemini.google.com/' },
+            copilot: { name: 'Copilot', icon: '🟣', url: 'https://copilot.microsoft.com/' },
+            perplexity: { name: 'Perplexity', icon: '🔷', url: 'https://www.perplexity.ai/' }
+        };
+
+        // 🔍 DONNÉES DE DÉMO POUR LA RECHERCHE
+        const DEMO_DATA = {
+            trending: [
+                { rank: 1, hashtag: '#voyage', count: '2.3M' },
+                { rank: 2, hashtag: '#mode', count: '1.8M' },
+                { rank: 3, hashtag: '#cuisine', count: '1.5M' },
+                { rank: 4, hashtag: '#fitness', count: '1.2M' }
+            ],
+            users: [
+                { name: 'Voyageur Éternel', handle: '@voyage_eternel', avatar: '🌍', verified: true },
+                { name: 'Mode & Style', handle: '@mode_style', avatar: '👗', verified: true },
+                { name: 'Chef Cuisine', handle: '@chef_cuisine', avatar: '👨‍🍳', verified: false },
+                { name: 'Fitness Pro', handle: '@fitness_pro', avatar: '💪', verified: true }
+            ],
+            videos: [
+                { thumbnail: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=300', views: '1.2M' },
+                { thumbnail: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=300', views: '890K' },
+                { thumbnail: 'https://images.unsplash.com/photo-1556910103-1c02745a30bf?w=300', views: '654K' },
+                { thumbnail: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=300', views: '543K' },
+                { thumbnail: 'https://images.unsplash.com/photo-1574680096141-1cddd32e04ca?w=300', views: '432K' },
+                { thumbnail: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300', views: '321K' }
+            ],
+            hashtags: [
+                { tag: '#voyage', posts: '2.3M' },
+                { tag: '#mode', posts: '1.8M' },
+                { tag: '#cuisine', posts: '1.5M' },
+                { tag: '#fitness', posts: '1.2M' },
+                { tag: '#nature', posts: '980K' }
+            ]
+        };
+
+        // 🧠 État de l'application
+        let selectedAI = localStorage.getItem('instaGalaxy_selectedAI') || 'qwen';
+        let tempSelectedAI = selectedAI;
+        let currentFilter = 'all';
+        let searchTimeout = null;
+        let searchHistory = JSON.parse(localStorage.getItem(CONFIG.searchHistoryKey) || '[]');
+
+        // 🎯 Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAIButton();
+            renderHistory();
+            renderTrending();
+            setupKeyboardShortcuts();
+        });
+
+        // 🤖 Mettre à jour le bouton IA
+        function updateAIButton() {
+            const aiData = AI_OPTIONS[selectedAI];
+            const label = document.getElementById('aiLabel');
+            const button = document.getElementById('aiButton');
+            
+            if (aiData) {
+                label.textContent = aiData.name;
+                button.querySelector('.ai-icon').textContent = aiData.icon;
+            }
+        }
+
+        // 🔍 Gestion de la saisie
+        function handleSearchInput(event) {
+            const query = event.target.value.trim();
+            const clearBtn = document.getElementById('clearBtn');
+            
+            clearBtn.classList.toggle('visible', query.length > 0);
+            
+            // Debounce pour la recherche
+            clearTimeout(searchTimeout);
+            
+            if (query.length > 0) {
+                searchTimeout = setTimeout(() => {
+                    performSearch(query);
+                }, CONFIG.searchDebounce);
+            } else {
+                showDefaultView();
+            }
+        }
+
+        function handleSearchKeyPress(event) {
+            if (event.key === 'Enter') {
+                const query = event.target.value.trim();
+                if (query.length > 0) {
+                    addToHistory(query);
+                    performSearch(query);
+                    event.target.blur();
+                }
+            }
+        }
+
+        function clearSearch(event) {
+            triggerMagic(event.target, event);
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearBtn').classList.remove('visible');
+            showDefaultView();
+        }
+
+        // 🔍 Effectuer la recherche
+        function performSearch(query) {
+            const historySection = document.getElementById('historySection');
+            const trendingSection = document.getElementById('trendingSection');
+            const resultsSection = document.getElementById('resultsSection');
+            const searchingState = document.getElementById('searchingState');
+            const noResultsState = document.getElementById('noResultsState');
+
+            // Afficher l'état de recherche
+            historySection.style.display = 'none';
+            trendingSection.style.display = 'none';
+            resultsSection.style.display = 'none';
+            searchingState.classList.add('active');
+            noResultsState.classList.remove('active');
+
+            // Simulation de recherche (remplacer par vraie API)
+            setTimeout(() => {
+                searchingState.classList.remove('active');
+                
+                // Afficher les résultats
+                renderUsers(query);
+                renderVideos(query);
+                renderHashtags(query);
+                
+                resultsSection.style.display = 'block';
+                
+                // Vérifier s'il y a des résultats
+                const hasResults = document.getElementById('usersList').children.length > 0 ||
+                                  document.getElementById('videosList').children.length > 0 ||
+                                  document.getElementById('hashtagsList').children.length > 0;
+                
+                if (!hasResults) {
+                    resultsSection.style.display = 'none';
+                    noResultsState.classList.add('active');
+                }
+            }, 800);
+        }
+
+        function showDefaultView() {
+            document.getElementById('historySection').style.display = 'block';
+            document.getElementById('trendingSection').style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('searchingState').classList.remove('active');
+            document.getElementById('noResultsState').classList.remove('active');
+        }
+
+        // 🕐 Historique de recherche
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+
+            if (searchHistory.length === 0) {
+                historyList.innerHTML = '<div style="padding: 20px 0; opacity: 0.5; text-align: center;">Aucun historique</div>';
+                return;
+            }
+
+            searchHistory.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <span class="history-icon">🔍</span>
+                    <span class="history-text">${escapeHtml(item.query)}</span>
+                    <span class="history-time">${item.time}</span>
+                    <button class="delete-btn" onclick="deleteHistoryItem(${index}, event)">✕</button>
+                `;
+                div.onclick = (e) => {
+                    if (!e.target.classList.contains('delete-btn')) {
+                        document.getElementById('searchInput').value = item.query;
+                        performSearch(item.query);
+                    }
+                };
+                historyList.appendChild(div);
+            });
+        }
+
+        function addToHistory(query) {
+            // Éviter les doublons
+            searchHistory = searchHistory.filter(item => item.query !== query);
+            
+            // Ajouter au début
+            searchHistory.unshift({
+                query: query,
+                time: getTimeAgo(new Date())
+            });
+
+            // Limiter à maxHistoryItems
+            if (searchHistory.length > CONFIG.maxHistoryItems) {
+                searchHistory = searchHistory.slice(0, CONFIG.maxHistoryItems);
+            }
+
+            localStorage.setItem(CONFIG.searchHistoryKey, JSON.stringify(searchHistory));
+            renderHistory();
+        }
+
+        function deleteHistoryItem(index, event) {
+            triggerMagic(event.target, event);
+            searchHistory.splice(index, 1);
+            localStorage.setItem(CONFIG.searchHistoryKey, JSON.stringify(searchHistory));
+            renderHistory();
+        }
+
+        function clearAllHistory(event) {
+            triggerMagic(event.target, event);
+            searchHistory = [];
+            localStorage.setItem(CONFIG.searchHistoryKey, JSON.stringify(searchHistory));
+            renderHistory();
+            showToast('🗑️ Historique effacé !');
+        }
+
+        // 🔥 Tendances
+        function renderTrending() {
+            const trendingList = document.getElementById('trendingList');
+            trendingList.innerHTML = '';
+
+            DEMO_DATA.trending.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'trending-item';
+                div.innerHTML = `
+                    <div class="trending-rank">#${item.rank}</div>
+                    <div class="trending-hashtag">${item.hashtag}</div>
+                    <div class="trending-count">${item.count} publications</div>
+                `;
+                div.onclick = () => {
+                    document.getElementById('searchInput').value = item.hashtag;
+                    addToHistory(item.hashtag);
+                    performSearch(item.hashtag);
+                };
+                trendingList.appendChild(div);
+            });
+        }
+
+        // 👤 Résultats utilisateurs
+        function renderUsers(query) {
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = '';
+
+            // Filtrer les utilisateurs (simulation)
+            const filtered = DEMO_DATA.users.filter(user => 
+                user.name.toLowerCase().includes(query.toLowerCase()) ||
+                user.handle.toLowerCase().includes(query.toLowerCase())
+            );
+
+            filtered.forEach(user => {
+                const div = document.createElement('div');
+                div.className = 'user-result';
+                div.innerHTML = `
+                    <div class="user-avatar">${user.avatar}</div>
+                    <div class="user-info">
+                        <div class="user-name">${user.name} ${user.verified ? '✓' : ''}</div>
+                        <div class="user-handle">${user.handle}</div>
+                    </div>
+                    <button class="follow-btn-mini" onclick="followUser(this, event)">Suivre</button>
+                `;
+                usersList.appendChild(div);
+            });
+
+            if (filtered.length === 0 && query.length > 2) {
+                // Afficher quelques utilisateurs aléatoires
+                DEMO_DATA.users.slice(0, 3).forEach(user => {
+                    const div = document.createElement('div');
+                    div.className = 'user-result';
+                    div.innerHTML = `
+                        <div class="user-avatar">${user.avatar}</div>
+                        <div class="user-info">
+                            <div class="user-name">${user.name} ${user.verified ? '✓' : ''}</div>
+                            <div class="user-handle">${user.handle}</div>
+                        </div>
+                        <button class="follow-btn-mini" onclick="followUser(this, event)">Suivre</button>
+                    `;
+                    usersList.appendChild(div);
+                });
+            }
+        }
+
+        function followUser(btn, event) {
+            triggerMagic(btn, event);
+            const isFollowing = btn.textContent === 'Suivi ✓';
+            btn.textContent = isFollowing ? 'Suivre' : 'Suivi ✓';
+            btn.style.background = isFollowing ? 
+                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 
+                'rgba(255,255,255,0.2)';
+            showToast(isFollowing ? '👋 Désabonné' : '🎉 Tu suis ce compte !');
+        }
+
+        // 🎬 Résultats vidéos
+        function renderVideos(query) {
+            const videosList = document.getElementById('videosList');
+            videosList.innerHTML = '';
+
+            DEMO_DATA.videos.forEach(video => {
+                const div = document.createElement('div');
+                div.className = 'video-thumbnail';
+                div.innerHTML = `
+                    <img src="${video.thumbnail}" alt="Video" loading="lazy">
+                    <div class="video-overlay">
+                        <span class="play-icon">▶️</span>
+                        <span>${video.views}</span>
+                    </div>
+                `;
+                div.onclick = () => {
+                    showToast('🎬 Ouverture de la vidéo...');
+                    // Ici : ouvrir la vidéo en plein écran
+                };
+                videosList.appendChild(div);
+            });
+        }
+
+        // #️⃣ Résultats hashtags
+        function renderHashtags(query) {
+            const hashtagsList = document.getElementById('hashtagsList');
+            hashtagsList.innerHTML = '';
+
+            DEMO_DATA.hashtags.forEach(hashtag => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <span class="history-icon">#️⃣</span>
+                    <span class="history-text">${hashtag.tag}</span>
+                    <span class="history-time">${hashtag.posts}</span>
+                `;
+                div.onclick = () => {
+                    document.getElementById('searchInput').value = hashtag.tag;
+                    addToHistory(hashtag.tag);
+                    performSearch(hashtag.tag);
+                };
+                hashtagsList.appendChild(div);
+            });
+        }
+
+        // 🎨 Filtres
+        function setFilter(chip, event) {
+            triggerMagic(chip, event);
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            currentFilter = chip.dataset.filter;
+            
+            // Filtrer les résultats (simulation)
+            const query = document.getElementById('searchInput').value.trim();
+            if (query.length > 0) {
+                performSearch(query);
+            }
+        }
+
+        // 🤖 Modal IA (fonctions simplifiées)
+        function openAIModal(event) {
+            triggerMagic(event.currentTarget, event);
+            tempSelectedAI = selectedAI;
+            document.querySelectorAll('.ai-option').forEach(opt => {
+                opt.style.borderColor = opt.dataset.ai === tempSelectedAI ? '#667eea' : 'transparent';
+                opt.querySelector('div:last-child').style.opacity = opt.dataset.ai === tempSelectedAI ? '1' : '0';
+            });
+            document.getElementById('aiModalOverlay').style.display = 'flex';
+            setTimeout(() => document.getElementById('aiModalOverlay').style.opacity = '1', 10);
+        }
+
+        function closeAIModal(event) {
+            const overlay = document.getElementById('aiModalOverlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.style.display = 'none', 300);
+        }
+
+        function selectAI(option) {
+            triggerMagic(option, event);
+            tempSelectedAI = option.dataset.ai;
+            document.querySelectorAll('.ai-option').forEach(opt => {
+                opt.style.borderColor = opt.dataset.ai === tempSelectedAI ? '#667eea' : 'transparent';
+                opt.querySelector('div:last-child').style.opacity = opt.dataset.ai === tempSelectedAI ? '1' : '0';
+            });
+        }
+
+        function confirmAISelection(event) {
+            triggerMagic(event.target, event);
+            selectedAI = tempSelectedAI;
+            localStorage.setItem('instaGalaxy_selectedAI', selectedAI);
+            updateAIButton();
+            closeAIModal(event);
+            showToast(`🤖 ${AI_OPTIONS[selectedAI].name} sélectionné !`);
+            setTimeout(() => window.open(AI_OPTIONS[selectedAI].url, '_blank'), 1000);
+        }
+
+        // 🧭 Navigation
+        function navigateTo(item, event) {
+            triggerMagic(item, event);
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            item.classList.add('active');
+            
+            const page = item.dataset.page;
+            
+            if (page === 'home') {
+                // Rediriger vers la page d'accueil (à implémenter)
+                showToast('🏠 Retour à l\'accueil...');
+                // window.location.href = 'index.html';
+            } else if (page === 'search') {
+                showToast('🔍 Tu es déjà dans Recherche !');
+            } else {
+                showToast('🚧 Page en construction !');
+            }
+            
+            item.classList.remove('has-notification');
+            item.querySelector('.badge-number')?.remove();
+        }
+
+        // ✨ Étoiles magiques
+        function createStars(x, y, color = '#FFD700') {
+            const emojis = ['✨', '⭐', '🌟', '💫', '🎇', '💖', '🔍'];
+            for (let i = 0; i < 14; i++) {
+                const star = document.createElement('div');
+                star.className = 'magic-star';
+                star.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                star.style.left = `${x}px`;
+                star.style.top = `${y}px`;
+                star.style.color = color;
+                
+                const tx = (Math.random() - 0.5) * 180 + 'px';
+                const ty = (Math.random() - 0.5) * 180 - 100 + 'px';
+                const rot = (Math.random() - 0.5) * 720 + 'deg';
+                
+                star.style.setProperty('--tx', tx);
+                star.style.setProperty('--ty', ty);
+                star.style.setProperty('--rot', rot);
+                
+                document.body.appendChild(star);
+                setTimeout(() => star.remove(), 1000);
+            }
+        }
+
+        // 🎨 Feedback magique
+        function triggerMagic(element, event) {
+            if (navigator.vibrate) navigator.vibrate(25);
+            element.classList.add('shaking');
+            setTimeout(() => element.classList.remove('shaking'), 150);
+            
+            const rect = element.getBoundingClientRect();
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createStars(
+                        rect.left + Math.random() * rect.width,
+                        rect.top + Math.random() * rect.height,
+                        ['#FFD700', '#bc1888', '#00FFFF', '#667eea'][Math.floor(Math.random() * 4)]
+                    );
+                }, i * 50);
+            }
+        }
+
+        // 🔔 Toast notifications
+        function showToast(message) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                document.body.appendChild(toast);
+            }
+            
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+
+        // 🔢 Utilitaires
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'À l\'instant';
+            if (seconds < 3600) return `Il y a ${Math.floor(seconds / 60)} min`;
+            if (seconds < 86400) return `Il y a ${Math.floor(seconds / 3600)} h`;
+            return `Il y a ${Math.floor(seconds / 86400)} j`;
+        }
+
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+K ou Cmd+K pour focus recherche
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                    triggerMagic(document.getElementById('searchInput'), e);
+                }
+                // Échap pour fermer modal
+                if (e.key === 'Escape') {
+                    closeAIModal(e);
+                }
+            });
+        }
+
+        // Fermer modal en cliquant dehors
+        document.getElementById('aiModalOverlay').addEventListener('click', (e) => {
+            if (e.target.id === 'aiModalOverlay') {
+                closeAIModal(e);
+            }
+        });
+    </script>
+</body>
+</html>
